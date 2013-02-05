@@ -58,6 +58,27 @@ end
 No model modification is necessary, just use the table as usual and it will simply work.
 You can even use it without ActiveRecord.
 
+Instead of random_id, you can use the random_str_id function. This additionally 
+changes the column type to character(6) and stores the ids as base32-encoded
+strings of handy human-friendly form (think YT ids), such as:
+    kn5xx1
+    qy2kp8
+    e5f67z
+    jz48ce
+    499fmd
+    qaph84
+    a2ke3b
+    ryr4aa
+    z4dnrs
+    w0a7g0
+    1fqmpq
+    nbcyc6
+    zwh5w5
+    0byxvw
+    bavkh3
+    fz0cb2
+    ...
+
 ## Contributing
 
 1. Fork it

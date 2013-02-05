@@ -11,6 +11,15 @@ module PgRandomId
         "ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT pri_scramble(#{key}, #{base})"
       end
       
+      def apply_str table, column, key = nil, base = nil
+        key ||= rand(2**15)
+        base ||= sequence_nextval "#{table}_#{column}_seq"
+        """
+          ALTER TABLE #{table} ALTER COLUMN #{column} SET DATA TYPE character(6);
+          ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT lpad(crockford(pri_scramble(#{key}, #{base})), 6, '0');
+        """
+      end
+      
       private
 
       FILES = %w(scramble.sql crockford.sql)
