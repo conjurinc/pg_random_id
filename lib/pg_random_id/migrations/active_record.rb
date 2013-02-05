@@ -1,4 +1,5 @@
 require 'active_record/migration'
+require 'pg_random_id/sql'
 
 module PgRandomId
   module Migrations
