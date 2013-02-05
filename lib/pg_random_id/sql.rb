@@ -5,10 +5,11 @@ module PgRandomId
         FILES.map {|f| read_file f}.join
       end
       
-      def apply table, column, key, base
+      def apply table, column, key = nil, base = nil
         key ||= rand(2**32)
         base ||= sequence_nextval "#{table}_#{column}_seq"
-        "ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT pri_scramble(#{key}, #{base})"
+         # substract 2^31 to adjust for signedness since we want to stay in integer type
+        "ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT pri_scramble(#{key}, #{base}) - 2147483648"
       end
       
       private
