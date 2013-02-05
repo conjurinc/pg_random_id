@@ -6,7 +6,7 @@ module PgRandomId
       end
       
       def apply table, column, key = nil, base = nil
-        key ||= rand(2**30)
+        key ||= rand(2**15)
         base ||= sequence_nextval "#{table}_#{column}_seq"
         "ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT pri_scramble(#{key}, #{base})"
       end
