@@ -8,6 +8,8 @@ describe PgRandomId::Migrations::ActiveRecord do
   describe '#create_random_id_functions' do
     it "installs the pri_scramble function" do
       migration.create_random_id_functions
+      
+      execute("SELECT 1 FROM pg_proc WHERE proname = 'crockford'").should be
       execute("SELECT 1 FROM pg_proc WHERE proname = 'pri_scramble'").should be
     end
   end

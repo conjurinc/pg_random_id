@@ -13,7 +13,7 @@ module PgRandomId
       
       private
 
-      FILES = %w(scramble.sql)
+      FILES = %w(scramble.sql crockford.sql)
       BASEDIR = File.expand_path 'sql', File.dirname(__FILE__)
       
       def read_file filename
