@@ -30,30 +30,33 @@ in a migration (a single one will do).
 
 Then to apply random ids to a table, use random_id function:
 
-    class RandomizeIdsOnFoo < ActiveRecord::Migration
-      def up
-        random_id :foo, :foo_id, 21315
-      end
-    end
-
-(Make sure the table is empty; migrating existing records is not implemented.)
-
-No model modification necessary, just use the table as usual and it will simply work.
+```ruby
+class RandomizeIdsOnFoo < ActiveRecord::Migration
+  def up
+    KEY = 21315
+    random_id :foo, :foo_id, KEY
+  end
+end
+```
 
 If you don't supply the key, a random one will be generated;
 similarly, the id column name defaults to :id. 
-
 This means that you can create a vanilla AR table with random ids
 with the following simple migration:
 
-    class CreateProducts < ActiveRecord::Migration
-      def up
-        create_table :products do |t|
-          t.string :name
-        end
-        random_id :products
-      end
+```ruby
+class CreateProducts < ActiveRecord::Migration
+  def up
+    create_table :products do |t|
+      t.string :name
     end
+    random_id :products
+  end
+end
+```
+
+No model modification is necessary, just use the table as usual and it will simply work.
+You can even use it without ActiveRecord.
 
 ## Contributing
 

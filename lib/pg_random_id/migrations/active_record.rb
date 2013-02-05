@@ -13,6 +13,7 @@ module PgRandomId
       # Apply a random id to a table.
       # If you don't give a key, a random one will be generated.
       # The ids will be based on sequence "#{table}_#{column}_seq".
+      # You need to make sure the table is empty; migrating existing records is not implemented.
       def random_id table, column = :id, key = nil
         execute PgRandomId::Sql::apply(table, column, key)
       end
