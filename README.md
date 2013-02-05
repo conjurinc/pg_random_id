@@ -2,9 +2,9 @@
 
 Allow usage of pseudo-random IDs in Postgresql databases.
 Changes sequential surrogate ids (1, 2, 3...) into a pseudo-random
-sequence of unique 30-bits nonnegative integer values.
+sequence of unique 30-bits nonnegative integer values (eg. 760280231, 110168588, 1029278017...).
 
-Integrates with ActiveRecord.
+Integrates with ActiveRecord. Sequel integration is upcoming.
 
 ## Installation
 
@@ -58,26 +58,11 @@ end
 No model modification is necessary, just use the table as usual and it will simply work.
 You can even use it without ActiveRecord.
 
-Instead of random_id, you can use the random_str_id function. This additionally 
-changes the column type to character(6) and stores the ids as base32-encoded
-strings of handy human-friendly form (think YT ids), such as:
-    kn5xx1
-    qy2kp8
-    e5f67z
-    jz48ce
-    499fmd
-    qaph84
-    a2ke3b
-    ryr4aa
-    z4dnrs
-    w0a7g0
-    1fqmpq
-    nbcyc6
-    zwh5w5
-    0byxvw
-    bavkh3
-    fz0cb2
-    ...
+### Text ids
+
+If you use random_str_id function instead, it will additionally 
+change the column type to character(6) and store the ids as base32-encoded
+strings of handy human-friendly form (eg. kn5xx1, qy2kp8, e5f67z...).
 
 ## Contributing
 
