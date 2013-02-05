@@ -64,6 +64,9 @@ If you use random_str_id function instead, it will additionally
 change the column type to character(6) and store the ids as base32-encoded
 strings of handy human-friendly form (eg. kn5xx1, qy2kp8, e5f67z...).
 
+Remember to use the correct type for any foreign key columns in other tables 
+if you use this.
+
 ## Contributing
 
 1. Fork it
