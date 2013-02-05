@@ -12,4 +12,8 @@ shared_context 'active_record' do
   let(:migration) {
     Class.new(ActiveRecord::Migration)
   }
+
+  def execute code
+    ActiveRecord::Base.connection.select_one(code)
+  end
 end
