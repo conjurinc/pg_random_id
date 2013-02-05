@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["divided.mind@gmail.com"]
   gem.description   = %q{Easily use randomized integers instead of sequential values for your record surrogate ids.}
   gem.summary       = %q{Pseudo-random record ids in Postgres}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/dividedmind/pg_random_id"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
