@@ -2,7 +2,7 @@
 
 Allow usage of pseudo-random IDs in Postgresql databases.
 Changes sequential surrogate ids (1, 2, 3...) into a pseudo-random
-sequence of unique integer values picked from [-2147483648; +2147483647].
+sequence of unique 30-bits nonnegative integer values.
 
 Integrates with ActiveRecord.
 
