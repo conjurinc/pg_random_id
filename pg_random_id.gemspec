@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.version       = PgRandomId::VERSION
   gem.authors       = ["Rafał Rzepecki"]
   gem.email         = ["divided.mind@gmail.com"]
-  gem.description   = %q{Easily use randomized integers instead of sequential values for your record surrogate ids.}
+  gem.description   = %q{Easily use randomized keys instead of sequential values for your record surrogate ids.}
   gem.summary       = %q{Pseudo-random record ids in Postgres}
   gem.homepage      = "https://github.com/dividedmind/pg_random_id"
 
@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
   
-  %w(activerecord rspec).each do |g|
+  %w(activerecord rspec sequel).each do |g|
     gem.add_development_dependency g
   end
 end
