@@ -14,7 +14,7 @@ Since surrogate IDs are often used in REST-ful URLs, this makes the addresses le
 
 
 Although the code is 100% database-side, it has been packaged into Ruby functions plugging 
-into ActiveRecord migrations for ease of use. There's also Sequel integration planned.
+into ActiveRecord and Sequel migrations for ease of use.
 
 ## Installation
 
@@ -31,6 +31,8 @@ Or install it yourself as:
     $ gem install pg_random_id
 
 ## Synopsis
+
+### ActiveRecord
 
 ```ruby
 class InstallRandomId < ActiveRecord::Migration
@@ -53,6 +55,37 @@ end
 
 class RandomizeIdsOnFoo < ActiveRecord::Migration
   def up
+    # make ids on a previously created table 
+    # 'foo' random (using string ids)
+    random_str_id :foo, :foo_id # you can specify id column name
+  end
+end
+```
+
+### Sequel
+
+```ruby
+Sequel.migration do
+  up do
+    # install the necessary SQL functions in the DB
+    create_random_id_functions
+  end
+end
+
+Sequel.migration do
+  up do
+    create_table :products do
+      primary_key :id
+      String :name
+    end
+    
+    # make the table use random ids
+    random_id :products
+  end
+end
+
+Sequel.migration do
+  up do
     # make ids on a previously created table 
     # 'foo' random (using string ids)
     random_str_id :foo, :foo_id # you can specify id column name
