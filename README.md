@@ -9,8 +9,8 @@ Since surrogate IDs are often used in REST-ful URLs, this makes the addresses le
 (while preserving the straightforward mapping from URLs to database IDs):
 - http://example.com/products/1 → http://example.com/products/134178313
 - http://example.com/products/2 → http://example.com/products/121521131
-- http://example.com/foo/1 → http://example.com/foo/2agc30
-- http://example.com/foo/2 → http://example.com/foo/4zkabg
+- http://example.com/widgets/1 → http://example.com/widgets/2agc30
+- http://example.com/widgets/2 → http://example.com/widgets/4zkabg
 
 
 Although the code is 100% database-side, it has been packaged into Ruby functions plugging 
@@ -53,11 +53,11 @@ class CreateProducts < ActiveRecord::Migration
   end
 end
 
-class RandomizeIdsOnFoo < ActiveRecord::Migration
+class RandomizeIdsOnWidgets < ActiveRecord::Migration
   def up
     # make ids on a previously created table 
-    # 'foo' random (using string ids)
-    random_str_id :foo, :foo_id # you can specify id column name
+    # 'widgets' random (using string ids)
+    random_str_id :widgets, :widget_id # you can specify id column name
   end
 end
 ```
@@ -87,18 +87,39 @@ end
 Sequel.migration do
   up do
     # make ids on a previously created table 
-    # 'foo' random (using string ids)
-    random_str_id :foo, :foo_id # you can specify id column name
+    # 'widgets' random (using string ids)
+    random_str_id :widgets, :widget_id # you can specify id column name
+  end
+end
+```
+
+## Considerations
+
+No model modification is necessary, just use the table as usual and it will simply work.
+Each table will use its own unique sequence, chosen at random at migration time.
+
+If you use `random_str_id` make sure to use a string type in 
+foreign key columns:
+```ruby
+class CreateContraptions < ActiveRecord::Migration
+  def up
+    create_table :contraptions do |t|
+      t.string :widget_id, limit: 6
+    end
+  end
+end
+```
+```ruby
+Sequel.migration do
+  up do
+    create_table :contraptions do
+      String :widget_id, size: 6
+    end
   end
 end
 ```
 
 ## Notes
-
-No model modification is necessary, just use the table as usual and it will simply work.
-Each table will use its own unique sequence, chosen at random at migration time.
-If you use `random_str_id` make sure to use the correct type (ie. char(6)) in 
-foreign key columns.
 
 The `random_id` function changes the default value of the ID column to a scrambled next sequence value.
 The scrambling function is a simple Feistel network, with a variable parameter which is used to choose the sequence.
