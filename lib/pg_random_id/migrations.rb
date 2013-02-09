@@ -34,7 +34,6 @@ module PgRandomId
 
     # Install the migration functions for Sequel
     def self.install_sequel
-      require 'active_record/migration'
       Sequel::Database.send :include, self
     end
   end
