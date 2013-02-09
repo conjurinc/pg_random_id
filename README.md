@@ -2,9 +2,19 @@
 
 Allow usage of pseudo-random IDs in Postgresql databases.
 Changes sequential surrogate ids (1, 2, 3...) into a pseudo-random
-sequence of unique 30-bits nonnegative integer values (eg. 760280231, 110168588, 1029278017...).
+sequence of unique 30-bits nonnegative integer values (eg. 760280231, 110168588, 1029278017...)
+or 6-character human-friendly-ish strings (eg. kn5xx1, qy2kp8, e5f67z...).
 
-Integrates with ActiveRecord. Sequel integration is upcoming.
+Since surrogate IDs are often used in REST-ful URLs, this makes the addresses less revealing and harder to guess
+(while preserving the straightforward mapping from URLs to database IDs):
+- http://example.com/products/1 → http://example.com/products/134178313
+- http://example.com/products/2 → http://example.com/products/121521131
+- http://example.com/foo/1 → http://example.com/foo/2agc30
+- http://example.com/foo/2 → http://example.com/foo/4zkabg
+
+
+Although the code is 100% database-side, it has been packaged into Ruby functions plugging 
+into ActiveRecord migrations for ease of use. There's also Sequel integration planned.
 
 ## Installation
 
@@ -20,52 +30,49 @@ Or install it yourself as:
 
     $ gem install pg_random_id
 
-## Usage
-
-The easiest way to use it is to use the supplied migration functions.
-
-First, make sure you put
-    create_random_id_functions
-in a migration (a single one will do).
-
-Then to apply random ids to a table, use random_id function:
+## Synopsis
 
 ```ruby
-class RandomizeIdsOnFoo < ActiveRecord::Migration
+class InstallRandomId < ActiveRecord::Migration
   def up
-    KEY = 21315
-    random_id :foo, :foo_id, KEY
+    # install the necessary SQL functions in the DB
+    create_random_id_functions
   end
 end
-```
 
-If you don't supply the key, a random one will be generated;
-similarly, the id column name defaults to :id. 
-This means that you can create a vanilla AR table with random ids
-with the following simple migration:
-
-```ruby
 class CreateProducts < ActiveRecord::Migration
   def up
     create_table :products do |t|
       t.string :name
     end
+    
+    # make the table use random ids
     random_id :products
+  end
+end
+
+class RandomizeIdsOnFoo < ActiveRecord::Migration
+  def up
+    # make ids on a previously created table 
+    # 'foo' random (using string ids)
+    random_str_id :foo, :foo_id # you can specify id column name
   end
 end
 ```
 
+## Notes
+
 No model modification is necessary, just use the table as usual and it will simply work.
-You can even use it without ActiveRecord.
+Each table will use its own unique sequence, chosen at random at migration time.
+If you use `random_str_id` make sure to use the correct type (ie. char(6)) in 
+foreign key columns.
 
-### Text ids
+The `random_id` function changes the default value of the ID column to a scrambled next sequence value.
+The scrambling function is a simple Feistel network, with a variable parameter which is used to choose the sequence.
 
-If you use random_str_id function instead, it will additionally 
-change the column type to character(6) and store the ids as base32-encoded
-strings of handy human-friendly form (eg. kn5xx1, qy2kp8, e5f67z...).
-
-Remember to use the correct type for any foreign key columns in other tables 
-if you use this.
+With `random_str_id` function, the column type is changed to character(6)
+and the sequence is additionally base32-encoded 
+with [Crockford encoding](http://www.crockford.com/wrmg/base32.html).
 
 ## Contributing
 
