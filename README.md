@@ -40,6 +40,10 @@ class InstallRandomId < ActiveRecord::Migration
     # install the necessary SQL functions in the DB
     create_random_id_functions
   end
+
+  def down
+    drop_random_id_functions
+  end
 end
 
 class CreateProducts < ActiveRecord::Migration
@@ -51,6 +55,11 @@ class CreateProducts < ActiveRecord::Migration
     # make the table use random ids
     random_id :products
   end
+
+  def down
+    # the random id will be removed along with the table
+    drop_table :products
+  end
 end
 
 class RandomizeIdsOnWidgets < ActiveRecord::Migration
@@ -58,6 +67,10 @@ class RandomizeIdsOnWidgets < ActiveRecord::Migration
     # make ids on a previously created table 
     # 'widgets' random (using string ids)
     random_str_id :widgets, :widget_id # you can specify id column name
+  end
+  
+  def down
+    remove_random_id :widgets, :widget_id
   end
 end
 ```
@@ -69,6 +82,10 @@ Sequel.migration do
   up do
     # install the necessary SQL functions in the DB
     create_random_id_functions
+  end
+
+  down do
+    drop_random_id_functions
   end
 end
 
@@ -82,6 +99,11 @@ Sequel.migration do
     # make the table use random ids
     random_id :products
   end
+
+  down do
+    # the random id will be removed along with the table
+    drop_table :products
+  end
 end
 
 Sequel.migration do
@@ -89,6 +111,10 @@ Sequel.migration do
     # make ids on a previously created table 
     # 'widgets' random (using string ids)
     random_str_id :widgets, :widget_id # you can specify id column name
+  end
+
+  down do
+    remove_random_id :widgets, :widget_id
   end
 end
 ```
