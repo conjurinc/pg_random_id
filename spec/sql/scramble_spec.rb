@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 require 'active_record'
-require 'pg_random_id/migrations/active_record'
 
 describe "pri_scramble(bigint, bigint)" do
   include_context 'active_record'
