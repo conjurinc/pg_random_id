@@ -8,6 +8,11 @@ module PgRandomId
       execute PgRandomId::Sql::install
     end
     
+    # Drop the functions installed by #create_random_id_functions
+    def drop_random_id_functions
+      execute PgRandomId::Sql::uninstall
+    end
+    
     # Apply a random id to a table.
     # If you don't give a key, a random one will be generated.
     # The ids will be based on sequence "#{table}_#{column}_seq".

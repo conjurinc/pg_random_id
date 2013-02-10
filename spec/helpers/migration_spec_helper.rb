@@ -8,6 +8,16 @@ shared_context 'test_migration' do
     end
   end
   
+  describe '#drop_random_id_functions' do
+    it "removes the functions" do
+      migration.create_random_id_functions
+      migration.drop_random_id_functions
+      
+      execute("SELECT 1 FROM pg_proc WHERE proname = 'crockford'").should_not be
+      execute("SELECT 1 FROM pg_proc WHERE proname = 'pri_scramble'").should_not be
+    end
+  end
+  
   describe '#random_id' do
     it "changes the default value" do
       migration.create_random_id_functions

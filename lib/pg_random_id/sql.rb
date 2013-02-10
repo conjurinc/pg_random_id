@@ -5,6 +5,13 @@ module PgRandomId
         FILES.map {|f| read_file f}.join
       end
       
+      def uninstall
+        """
+          DROP FUNCTION crockford(input bigint);
+          DROP FUNCTION pri_scramble(key bigint, input bigint);
+        """
+      end
+      
       def apply table, column, key = nil, base = nil
         key ||= rand(2**15)
         base ||= sequence_nextval "#{table}_#{column}_seq"
