@@ -18,6 +18,14 @@ module PgRandomId
         "ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT pri_scramble(#{key}, #{base})"
       end
       
+      def unapply table, column, base = nil
+        base ||= sequence_nextval "#{table}_#{column}_seq"
+        """
+          ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT #{base};
+          ALTER TABLE #{table} ALTER COLUMN #{column} SET DATA TYPE integer USING 0;
+        """
+      end
+      
       def apply_str table, column, key = nil, base = nil
         key ||= rand(2**15)
         base ||= sequence_nextval "#{table}_#{column}_seq"

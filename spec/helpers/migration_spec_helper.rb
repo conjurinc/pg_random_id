@@ -38,6 +38,26 @@ shared_context 'test_migration' do
       execute("SELECT COUNT(*) FROM foo").first[1].to_i.should == 10
     end
   end
+  
+  describe '#remove_random_id' do
+    it "restores the default value" do
+      migration.create_random_id_functions
+      create_table :foo
+      migration.random_id :foo
+      migration.remove_random_id :foo
+      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_scramble%'").should_not be
+      execute("INSERT INTO foo VALUES (DEFAULT) RETURNING id;").first[1].to_i.should == 1
+    end
+    
+    it "also works with str id" do
+      migration.create_random_id_functions
+      create_table :foo
+      migration.random_str_id :foo
+      migration.remove_random_id :foo
+      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_scramble%'").should_not be
+      execute("INSERT INTO foo VALUES (DEFAULT) RETURNING id;").first[1].to_i.should == 1
+    end
+  end
 
   describe '#random_str_id' do
     it "changes the default value" do

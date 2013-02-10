@@ -21,6 +21,16 @@ module PgRandomId
       execute PgRandomId::Sql::apply(table, column, key)
     end
 
+    # Changes type of a column to int and restores sequence default on it.
+    #
+    # This is mainly useful for a down migration while developing the database and switching back and forth.
+    # Not needed in real use, as dropping a table will obliterate the default value anyway.
+    # 
+    # You need to make sure the table is empty; migrating existing records is not implemented.
+    def remove_random_id table, column = :id
+      execute PgRandomId::Sql::unapply(table, column)
+    end
+
     # Apply a random string id to a table. 
     # Also changes the type of the id column to char(6).
     # If you don't give a key, a random one will be generated.
