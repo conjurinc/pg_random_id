@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
   
-  %w(activerecord rspec sequel pg).each do |g|
+  %w(activerecord rspec sequel pg ci_reporter rake).each do |g|
     gem.add_development_dependency g
   end
 end
