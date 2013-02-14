@@ -12,25 +12,26 @@ module PgRandomId
         """
       end
       
-      def apply table, column, key = nil, base = nil
-        key ||= rand(2**15)
-        base ||= sequence_nextval "#{table}_#{column}_seq"
+      def apply table, column, options = {}
+        key = options[:key] || rand(2**15)
+        base = options[:base] || sequence_nextval("#{table}_#{column}_seq")
         "ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT pri_scramble(#{key}, #{base})"
       end
       
-      def unapply table, column, base = nil
-        base ||= sequence_nextval "#{table}_#{column}_seq"
+      def unapply table, column, options = {}
+        base = options[:base] || sequence_nextval("#{table}_#{column}_seq")
         """
           ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT #{base};
           ALTER TABLE #{table} ALTER COLUMN #{column} SET DATA TYPE integer USING 0;
         """
       end
       
-      def apply_str table, column, key = nil, base = nil
-        key ||= rand(2**15)
-        base ||= sequence_nextval "#{table}_#{column}_seq"
+      def apply_str table, column, options = {}
+        key = options[:key] || rand(2**15)
+        base = options[:base] || sequence_nextval("#{table}_#{column}_seq")
+        type = options[:type] || "character(6)"
         """
-          ALTER TABLE #{table} ALTER COLUMN #{column} SET DATA TYPE character(6);
+          ALTER TABLE #{table} ALTER COLUMN #{column} SET DATA TYPE #{type};
           ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT lpad(crockford(pri_scramble(#{key}, #{base})), 6, '0');
         """
       end

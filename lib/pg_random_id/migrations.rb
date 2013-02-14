@@ -18,7 +18,7 @@ module PgRandomId
     # The ids will be based on sequence "#{table}_#{column}_seq".
     # You need to make sure the table is empty; migrating existing records is not implemented.
     def random_id table, column = :id, key = nil
-      execute PgRandomId::Sql::apply(table, column, key)
+      execute PgRandomId::Sql::apply(table, column, key: key)
     end
 
     # Changes type of a column to int and restores sequence default on it.
@@ -38,7 +38,7 @@ module PgRandomId
     # scrambled and base32-encoded.
     # You need to make sure the table is empty; migrating existing records is not implemented.
     def random_str_id table, column = :id, key = nil
-      execute PgRandomId::Sql::apply_str(table, column, key)
+      execute PgRandomId::Sql::apply_str(table, column, key: key)
     end
     
     # Install the migration functions for ActiveRecord
