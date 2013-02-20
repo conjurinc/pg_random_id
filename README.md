@@ -120,6 +120,30 @@ Sequel.migration do
 end
 ```
 
+## Upgrading
+
+If you want to upgrade a live database from before 1.0.0 version, you need to call 
+create_random_id_functions in a migration again, as key storage changed
+from being in the default value to a separate key table to allow prefetching values.
+
+Note that existing random ids will still use the old format and you won't be able
+to use `pri_nextval` on them, though they'll continue to work.
+
+If you don't have a live database to upgrade, you don't need to do anything.
+Migration methods haven't changed and will work using the new format;
+just make sure to recreate schema.sql if you're using it.
+
+## Prefetching values
+
+Installing pg_random_id in the database allows using `pri_nextval` and `pri_nextval_str`
+SQL functions in much the same manner as the standard `nextval` function, eg.:
+
+```ruby
+  next = DB["SELECT pri_nextval('foo_id_seq'::regclass)"].first.values[0]
+```
+
+Note that this feature is only available since version 1.0.0.
+
 ## Considerations
 
 No model modification is necessary, just use the table as usual and it will simply work.

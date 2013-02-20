@@ -23,7 +23,7 @@ shared_context 'test_migration' do
       migration.create_random_id_functions
       create_table :foo
       migration.random_id :foo
-      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_scramble%'").should be
+      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_%'").should be
     end
 
     it "creates a few values without error" do
@@ -36,6 +36,7 @@ shared_context 'test_migration' do
         }.to_not raise_error
       end
       execute("SELECT COUNT(*) FROM foo").first[1].to_i.should == 10
+      execute("SELECT id FROM foo LIMIT 1").first[1].to_i.should_not == 1
     end
   end
   
@@ -45,7 +46,7 @@ shared_context 'test_migration' do
       create_table :foo
       migration.random_id :foo
       migration.remove_random_id :foo
-      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_scramble%'").should_not be
+      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_%'").should_not be
       execute("INSERT INTO foo VALUES (DEFAULT) RETURNING id;").first[1].to_i.should == 1
     end
     
@@ -54,7 +55,7 @@ shared_context 'test_migration' do
       create_table :foo
       migration.random_str_id :foo
       migration.remove_random_id :foo
-      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_scramble%'").should_not be
+      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_%'").should_not be
       execute("INSERT INTO foo VALUES (DEFAULT) RETURNING id;").first[1].to_i.should == 1
     end
   end
@@ -64,8 +65,7 @@ shared_context 'test_migration' do
       migration.create_random_id_functions
       create_table :foo
       migration.random_str_id :foo
-      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_scramble%'").should be
-      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%crockford%'").should be
+      execute("SELECT 1 FROM pg_attrdef WHERE adrelid = 'foo'::regclass AND adsrc LIKE '%pri_%'").should be
       execute("INSERT INTO foo VALUES (DEFAULT) RETURNING id;").first[1].should_not == '1'
     end
 

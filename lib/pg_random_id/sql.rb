@@ -6,47 +6,45 @@ module PgRandomId
       end
       
       def uninstall
-        """
-          DROP FUNCTION crockford(input bigint);
-          DROP FUNCTION pri_scramble(key bigint, input bigint);
-        """
+        read_file 'uninstall.sql'
       end
       
       def apply table, column, options = {}
         key = options[:key] || rand(2**15)
-        base = options[:base] || sequence_nextval("#{table}_#{column}_seq")
-        "ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT pri_scramble(#{key}, #{base})"
+        sequence = options[:sequence] || "#{table}_#{column}_seq"
+        """
+          INSERT INTO pri_keys VALUES ('#{sequence}'::regclass, #{key});
+          ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT pri_nextval('#{sequence}'::regclass);
+        """
       end
       
       def unapply table, column, options = {}
-        base = options[:base] || sequence_nextval("#{table}_#{column}_seq")
+        sequence = options[:sequence] || "#{table}_#{column}_seq"
         """
-          ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT #{base};
+          ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT nextval('#{sequence}'::regclass);
           ALTER TABLE #{table} ALTER COLUMN #{column} SET DATA TYPE integer USING 0;
+          DELETE FROM pri_keys WHERE sequence = '#{sequence}'::regclass;
         """
       end
       
       def apply_str table, column, options = {}
         key = options[:key] || rand(2**15)
-        base = options[:base] || sequence_nextval("#{table}_#{column}_seq")
+        sequence = options[:sequence] || "#{table}_#{column}_seq"
         type = options[:type] || "character(6)"
         """
+          INSERT INTO pri_keys VALUES ('#{sequence}'::regclass, #{key});
           ALTER TABLE #{table} ALTER COLUMN #{column} SET DATA TYPE #{type};
-          ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT lpad(crockford(pri_scramble(#{key}, #{base})), 6, '0');
+          ALTER TABLE #{table} ALTER COLUMN #{column} SET DEFAULT pri_nextval_str('#{sequence}'::regclass);
         """
       end
       
       private
 
-      FILES = %w(scramble.sql crockford.sql)
+      FILES = %w(scramble.sql crockford.sql keytable.sql)
       BASEDIR = File.expand_path 'sql', File.dirname(__FILE__)
       
       def read_file filename
         File.read(File.expand_path(filename, BASEDIR))
-      end
-      
-      def sequence_nextval sequence_name
-        "nextval('#{sequence_name}'::regclass)"
       end
     end
   end
