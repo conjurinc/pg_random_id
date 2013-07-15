@@ -1,3 +1,6 @@
+require 'active_record'
+require 'sequel'
+
 require 'pg_random_id'
 
 require 'helpers/active_record_helper'
