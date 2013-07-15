@@ -5,14 +5,36 @@ CREATE TABLE pri_keys (
   key integer NOT NULL);
 
 CREATE OR REPLACE FUNCTION
+pri_random_key() RETURNS integer
+LANGUAGE sql
+VOLATILE
+AS $$
+  SELECT trunc(random() * 2^15)::integer;
+$$;
+
+CREATE OR REPLACE FUNCTION
+pri_key(_sequence regclass) RETURNS integer
+LANGUAGE plpgsql
+STRICT
+AS $$
+  DECLARE
+    _key integer = key FROM pri_keys WHERE sequence = _sequence;
+  BEGIN
+    IF _key IS NULL THEN
+      RAISE WARNING 'key not found for sequence %, generating a random one', _sequence;
+      INSERT INTO pri_keys(sequence, key) VALUES (_sequence, pri_random_key()) RETURNING key INTO _key;
+    END IF;
+    RETURN _key;
+  END
+$$;
+
+CREATE OR REPLACE FUNCTION
 pri_nextval(sequence regclass) RETURNS integer
 LANGUAGE sql
 VOLATILE
 STRICT
 AS $$
-  SELECT pri_scramble(key, nextval($1))
-    FROM pri_keys
-    WHERE sequence = $1;
+  SELECT pri_scramble(pri_key($1), nextval($1));
 $$;
 
 CREATE OR REPLACE FUNCTION
@@ -21,7 +43,5 @@ LANGUAGE sql
 VOLATILE
 STRICT
 AS $$
-  SELECT lpad(crockford(pri_scramble(key, nextval($1))), 6, '0')
-    FROM pri_keys
-    WHERE sequence = $1;
+  SELECT lpad(crockford(pri_scramble(pri_key($1), nextval($1))), 6, '0');
 $$;
