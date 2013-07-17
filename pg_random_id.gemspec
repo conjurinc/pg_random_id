@@ -11,6 +11,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{Easily use randomized keys instead of sequential values for your record surrogate ids.}
   gem.summary       = %q{Pseudo-random record ids in Postgres}
   gem.homepage      = "https://github.com/inscitiv/pg_random_id"
+  gem.license       = 'MIT'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
