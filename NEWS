@@ -1,0 +1,3 @@
+Version 1.0.2
+* create_random_id_functions now works even if pri_keys table
+  has been already created

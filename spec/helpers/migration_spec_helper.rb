@@ -6,6 +6,20 @@ shared_context 'test_migration' do
       execute("SELECT 1 FROM pg_proc WHERE proname = 'crockford'").should be
       execute("SELECT 1 FROM pg_proc WHERE proname = 'pri_scramble'").should be
     end
+
+    context "with a key table already in place" do
+      before do
+        execute """
+          CREATE TABLE pri_keys (
+            sequence regclass PRIMARY KEY,
+            key integer NOT NULL);
+        """
+      end
+
+      it "does not panic" do
+        expect { migration.create_random_id_functions }.to_not raise_error
+      end
+    end
   end
   
   describe '#drop_random_id_functions' do

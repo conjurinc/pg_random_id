@@ -1,6 +1,6 @@
 SET LOCAL client_min_messages = error; -- to avoid implicit index messages
 
-CREATE TABLE pri_keys (
+CREATE TABLE IF NOT EXISTS pri_keys (
   sequence regclass PRIMARY KEY,
   key integer NOT NULL);
 
