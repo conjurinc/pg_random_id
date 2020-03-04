@@ -23,5 +23,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'sequel', '~>3.44'
   gem.add_development_dependency 'pg', '~>0.14'
   gem.add_development_dependency 'ci_reporter', '~>1.8'
-  gem.add_development_dependency 'rake', '~>10.0'
+  gem.add_development_dependency 'rake', '>=12.3.3'
 end
